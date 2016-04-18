@@ -107,6 +107,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Filters\BasicAuthenticationFilter.cs" />
+    <Compile Include="Filters\BasicAuthenticationIdentity.cs" />
+    <Compile Include="Filters\ApiAuthenticationFilter.cs" />
+    <Compile Include="Filters\ExceptionHandFilter.cs" />
+    <Compile Include="Filters\WebApiProfilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

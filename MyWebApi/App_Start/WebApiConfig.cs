@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using MyWebApi.Filters;
 
 namespace MyWebApi
 {
@@ -11,6 +12,9 @@ namespace MyWebApi
         public static void Register(HttpConfiguration config)
         {
             // Web API 配置和服务
+
+            //启用Basic认证
+            config.Filters.Add(new ApiAuthenticationFilter());
 
             //配置WebApi可跨域访问：无限制
             var cors = new EnableCorsAttribute("*", "*", "*");
