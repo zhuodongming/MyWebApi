@@ -15,7 +15,7 @@ namespace MyWebApi.Filters
 
             var basicAuthenticationIdentity = Thread.CurrentPrincipal.Identity as BasicAuthenticationIdentity;
             if (basicAuthenticationIdentity != null)
-                basicAuthenticationIdentity.UserId = "userId";
+                basicAuthenticationIdentity.UserId = 123;
             return true;
 
         }

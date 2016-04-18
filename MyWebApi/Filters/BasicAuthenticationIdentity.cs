@@ -8,7 +8,7 @@ namespace MyWebApi.Filters
 {
     public class BasicAuthenticationIdentity : GenericIdentity
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string UserName { get; set; }
         public string UserPassword { get; set; }
         public BasicAuthenticationIdentity(string name, string password) : base(name, "Basic")
