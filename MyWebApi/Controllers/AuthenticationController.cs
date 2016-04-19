@@ -15,6 +15,32 @@ namespace MyWebApi.Controllers
 {
     public class AuthenticationController : ApiController
     {
+        private static Dictionary<string, string> userAccounters;
+        public AuthenticationController()
+        {
+            userAccounters = new Dictionary<string, string>();
+            userAccounters.Add("Foo", "Password");
+            userAccounters.Add("Bar", "Password");
+            userAccounters.Add("Baz", "Password");
+        }
+        [OverrideExceptionFilters]
+        [HttpGet]
+        [Route("api/auth/{username}/{password}")]
+        public Task<IHttpActionResult> Validate(string userName, string password)
+        {
+            string pwd;
+            if (userAccounters.TryGetValue(userName, out pwd))
+            {
+                if (password != pwd)
+                {
+                    throw new ArgumentException("密码错误");
+                }
+                return Task.FromResult<IHttpActionResult>(Ok("认证成功"));
+            }
+            throw new ArgumentException("用户名不存在");
+        }
+
+
         [HttpPost]
         public async Task<IHttpActionResult> Authenticate()
         {

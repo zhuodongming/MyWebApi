@@ -18,7 +18,7 @@ namespace MyWebApi.Filters
     /// <summary>
     /// 异常处理过滤器
     /// </summary>
-    public class ExceptionHandFilterAttribute : ExceptionFilterAttribute
+    public class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
     {
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public override Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
@@ -37,17 +37,17 @@ namespace MyWebApi.Filters
 
             if (exceptionType == typeof(ValidationException))
             {
-                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent(actionExecutedContext.Exception.Message), ReasonPhrase = "ValidationException", };
-                throw new HttpResponseException(resp);
+                actionExecutedContext.Response = actionExecutedContext.Request.CreateResponse(HttpStatusCode.BadRequest, actionExecutedContext.Exception.Message);
             }
             else if (exceptionType == typeof(UnauthorizedAccessException))
             {
-                throw new HttpResponseException(actionExecutedContext.Request.CreateResponse(HttpStatusCode.Unauthorized));
+                actionExecutedContext.Response = actionExecutedContext.Request.CreateResponse(HttpStatusCode.Unauthorized, "身份验证未通过");
             }
             else
             {
-                throw new HttpResponseException(actionExecutedContext.Request.CreateResponse(HttpStatusCode.InternalServerError));
+                actionExecutedContext.Response = actionExecutedContext.Request.CreateResponse(HttpStatusCode.InternalServerError, "服务器端发生异常");
             }
+            return Task.FromResult<object>(null);
         }
     }
 }

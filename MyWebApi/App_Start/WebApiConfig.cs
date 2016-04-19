@@ -13,9 +13,6 @@ namespace MyWebApi
         {
             // Web API 配置和服务
 
-            //启用Basic认证
-            config.Filters.Add(new ApiAuthenticationFilterAttribute());
-
             //配置WebApi可跨域访问：无限制
             var cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);

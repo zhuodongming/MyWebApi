@@ -29,7 +29,7 @@ namespace MyWebApi.Filters
                 message.Append("Action: " + actionContext.ActionDescriptor.ActionName + Environment.NewLine);
                 message.Append("Action Parameters: " + JsonConvert.SerializeObject(actionContext.ActionArguments));
 
-                Logger.Info(message.ToString());
+                Logger.Info("参数绑定失败:" + message.ToString());
 
                 actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, actionContext.ModelState);
             }
