@@ -18,7 +18,7 @@ namespace MyWebApi.Filters
     /// <summary>
     /// 异常处理过滤器
     /// </summary>
-    public class ExceptionHandFilter : ExceptionFilterAttribute
+    public class ExceptionHandFilterAttribute : ExceptionFilterAttribute
     {
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public override Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)

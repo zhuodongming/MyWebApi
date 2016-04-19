@@ -17,7 +17,7 @@ namespace MyWebApi.Filters
     /// <summary>
     /// webapi处理性能监视器
     /// </summary>
-    public class WebApiProfilter : ActionFilterAttribute
+    public class WebApiProfilterAttribute : ActionFilterAttribute
     {
         int executionTime = 50;
         private Stopwatch timer = null;

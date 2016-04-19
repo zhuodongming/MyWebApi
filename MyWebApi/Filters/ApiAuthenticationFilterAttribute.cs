@@ -7,7 +7,7 @@ using System.Web.Http.Controllers;
 
 namespace MyWebApi.Filters
 {
-    public class ApiAuthenticationFilter : BasicAuthenticationFilter
+    public class ApiAuthenticationFilterAttribute : BasicAuthenticationFilterAttribute
     {
         public override bool OnAuthorize(string userName, string userPassword, HttpActionContext actionContext)
         {

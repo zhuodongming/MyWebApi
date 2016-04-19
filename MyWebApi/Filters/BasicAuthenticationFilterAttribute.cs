@@ -15,7 +15,7 @@ using System.Web.Http.Filters;
 namespace MyWebApi.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
-    public class BasicAuthenticationFilter : AuthorizationFilterAttribute
+    public class BasicAuthenticationFilterAttribute : AuthorizationFilterAttribute
     {
         public override Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {

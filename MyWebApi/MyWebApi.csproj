@@ -109,11 +109,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Filters\ActionFilterRequiredAttribute.cs" />
-    <Compile Include="Filters\BasicAuthenticationFilter.cs" />
+    <Compile Include="Filters\BasicAuthenticationFilterAttribute.cs" />
     <Compile Include="Filters\BasicAuthenticationIdentity.cs" />
-    <Compile Include="Filters\ApiAuthenticationFilter.cs" />
-    <Compile Include="Filters\ExceptionHandFilter.cs" />
-    <Compile Include="Filters\WebApiProfilter.cs" />
+    <Compile Include="Filters\ApiAuthenticationFilterAttribute.cs" />
+    <Compile Include="Filters\ExceptionHandFilterAttribute.cs" />
+    <Compile Include="Filters\ValidActionFilterAttribute.cs" />
+    <Compile Include="Filters\WebApiProfilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
