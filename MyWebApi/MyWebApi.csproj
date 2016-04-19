@@ -115,6 +115,7 @@
     <Compile Include="Filters\BasicAuthenticationIdentity.cs" />
     <Compile Include="Filters\ApiAuthenticationFilterAttribute.cs" />
     <Compile Include="Filters\ExceptionHandlerFilterAttribute.cs" />
+    <Compile Include="Filters\RequiredHttpsAttribute.cs" />
     <Compile Include="Filters\ValidActionFilterAttribute.cs" />
     <Compile Include="Filters\WebApiProfilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
