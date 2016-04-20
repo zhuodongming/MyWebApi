@@ -14,6 +14,10 @@ using NLog;
 
 namespace MyWebApi.Filters
 {
+    /// <summary>
+    /// Action的参数验证过滤器
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public class ValidActionFilterAttribute : ActionFilterAttribute
     {
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -21,6 +25,7 @@ namespace MyWebApi.Filters
         {
             if (!actionContext.ModelState.IsValid)
             {
+
                 StringBuilder message = new StringBuilder(200);
                 message.Append("URL: " + actionContext.Request.RequestUri + Environment.NewLine);
                 message.Append("Method: " + actionContext.Request.Method + Environment.NewLine);

@@ -18,6 +18,7 @@ namespace MyWebApi.Filters
     /// <summary>
     /// 异常处理过滤器
     /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
     {
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();

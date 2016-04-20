@@ -10,62 +10,35 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Net.Http.Headers;
 
 namespace MyWebApi.Controllers
 {
     public class AuthenticationController : ApiController
     {
-        private static Dictionary<string, string> userAccounters;
-        public AuthenticationController()
-        {
-            userAccounters = new Dictionary<string, string>();
-            userAccounters.Add("Foo", "Password");
-            userAccounters.Add("Bar", "Password");
-            userAccounters.Add("Baz", "Password");
-        }
-        [OverrideExceptionFilters]
-        [HttpGet]
-        [Route("api/auth/{username}/{password}")]
-        public Task<IHttpActionResult> Validate(string userName, string password)
-        {
-            string pwd;
-            if (userAccounters.TryGetValue(userName, out pwd))
-            {
-                if (password != pwd)
-                {
-                    throw new ArgumentException("密码错误");
-                }
-                return Task.FromResult<IHttpActionResult>(Ok("认证成功"));
-            }
-            throw new ArgumentException("用户名不存在");
-        }
-
-
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <returns></returns>
+        [Authenticate]//启用认证过滤器
+        [OverrideAuthorization]//不启用授权过滤器
         [HttpPost]
-        public async Task<IHttpActionResult> Authenticate()
+        public async Task<HttpResponseMessage> Validate()
         {
-            IPrincipal principal = Thread.CurrentPrincipal;
-            if (principal != null && principal.Identity.IsAuthenticated)
-            {
-                var baseAuthenticationIdentiy = principal.Identity as BasicAuthenticationIdentity;
-                if (baseAuthenticationIdentiy != null)
-                {
-                    var userId = baseAuthenticationIdentiy.UserId;
-                    return ResponseMessage(await GetAuthToken(userId));
-                }
-            }
-            return null;
-        }
-
-        private async Task<HttpResponseMessage> GetAuthToken(int userId)
-        {
-            await Task.Delay(100);
-            string token = Guid.NewGuid().ToString();
-            var response = Request.CreateResponse(HttpStatusCode.OK, "Authorized");
+            string token = "1234567890";//令牌
+            var response = Request.CreateResponse(HttpStatusCode.OK, "登录成功");
             response.Headers.Add("Token", token);
             response.Headers.Add("TokenExpiry", ConfigurationManager.AppSettings["TokenExpiry"]);
             response.Headers.Add("Access-Control-Expose-Headers", "Token,TokenExpiry");
-            return response;
+
+            CookieHeaderValue[] cookies = new CookieHeaderValue[] { new CookieHeaderValue("Token", token) };
+            response.Headers.AddCookies(cookies);
+            return await Task.FromResult<HttpResponseMessage>(response);
+        }
+
+        public async Task<IHttpActionResult> Get()
+        {
+            return await Task.FromResult(Ok("成功调用"));
         }
     }
 }

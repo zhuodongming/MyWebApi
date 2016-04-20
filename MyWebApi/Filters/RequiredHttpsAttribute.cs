@@ -13,6 +13,10 @@ using System.Web.Http.Results;
 
 namespace MyWebApi.Filters
 {
+    /// <summary>
+    /// Https检验过滤器
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public class RequiredHttpsAttribute : AuthorizationFilterAttribute
     {
         public override Task OnAuthorizationAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
