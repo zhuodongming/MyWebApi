@@ -7,6 +7,9 @@ using System.Data.Entity.Infrastructure.Interception;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Configuration;
+using System.Transactions;
+using System.Data;
 
 namespace MyWebApi.Models
 {
@@ -19,6 +22,102 @@ namespace MyWebApi.Models
         {
             DbInterception.Add(new SQLProfiler(50));//配置EF的sql性能监视器
             DbInterception.Add(new EFLogTransactionInterceptor());//配置EF的事务监视器
+            DbInterception.Add(new DbMasterSlaveCommandInterceptor());//配置读写分离监视器
+        }
+    }
+
+    /// <summary>
+    /// 读写分离监视器
+    /// </summary>
+    public class DbMasterSlaveCommandInterceptor : DbCommandInterceptor
+    {
+        private Lazy<string> masterConnectionString = new Lazy<string>(() => ConfigurationManager.ConnectionStrings["masterConnectionString"].ConnectionString);
+        private Lazy<string> slaveConnectionString = new Lazy<string>(() => ConfigurationManager.ConnectionStrings["slaveConnectionString"].ConnectionString);
+
+        public string MasterConnectionString
+        {
+            get { return this.masterConnectionString.Value; }
+        }
+
+        public string SlaveConnectionString
+        {
+            get { return this.slaveConnectionString.Value; }
+        }
+
+        public override void ReaderExecuting(DbCommand command, DbCommandInterceptionContext<DbDataReader> interceptionContext)
+        {
+            this.UpdateToSlave(interceptionContext);
+        }
+
+        public override void ScalarExecuting(DbCommand command, DbCommandInterceptionContext<object> interceptionContext)
+        {
+            this.UpdateToSlave(interceptionContext);
+        }
+
+        public override void NonQueryExecuting(DbCommand command, DbCommandInterceptionContext<int> interceptionContext)
+        {
+            this.UpdateToMaster(interceptionContext);
+        }
+
+        private void UpdateToMaster(DbInterceptionContext interceptionContext)
+        {
+            foreach (var context in interceptionContext.DbContexts)
+            {
+                this.UpdateConnectionStringIfNeed(context.Database.Connection, this.MasterConnectionString);
+            }
+        }
+
+        private void UpdateToSlave(DbInterceptionContext interceptionContext)
+        {
+            // 判断当前会话是否处于分布式事务中
+            bool isDistributedTran = Transaction.Current != null && Transaction.Current.TransactionInformation.Status != TransactionStatus.Committed;
+            foreach (var context in interceptionContext.DbContexts)
+            {
+                // 判断该 context 是否处于普通数据库事务中
+                bool isDbTran = context.Database.CurrentTransaction != null;
+
+                // 如果处于分布式事务或普通事务中，则“禁用”读写分离，处于事务中的所有读写操作都指向 Master
+                string connectionString = isDistributedTran || isDbTran ? this.MasterConnectionString : this.SlaveConnectionString;
+
+                this.UpdateConnectionStringIfNeed(context.Database.Connection, connectionString);
+            }
+        }
+
+        /// <summary>
+        /// 此处改进了对连接字符串的修改判断机制，确认只在 <paramref name="conn"/> 所使用的连接字符串不等效于 <paramref name="connectionString"/> 的情况下才需要修改。
+        /// <para>同时，在必要的情况下才会连接进行 Open 和 Close 操作以及修改 ConnectionString 处理，减少了性能的消耗。</para>
+        /// </summary>
+        /// <param name="conn"></param>
+        /// <param name="connectionString"></param>
+        private void UpdateConnectionStringIfNeed(DbConnection conn, string connectionString)
+        {
+            if (!this.ConnectionStringCompare(conn, connectionString))
+            {
+                this.UpdateConnectionString(conn, connectionString);
+            }
+        }
+
+        private void UpdateConnectionString(DbConnection conn, string connectionString)
+        {
+            ConnectionState state = conn.State;
+            if (state == ConnectionState.Open)
+                conn.Close();
+
+            conn.ConnectionString = connectionString;
+
+            if (state == ConnectionState.Open)
+                conn.Open();
+        }
+
+        private bool ConnectionStringCompare(DbConnection conn, string connectionString)
+        {
+            DbConnectionStringBuilder a = new DbConnectionStringBuilder();
+            a.ConnectionString = conn.ConnectionString;
+
+            DbConnectionStringBuilder b = new DbConnectionStringBuilder();
+            b.ConnectionString = connectionString;
+
+            return a.EquivalentTo(b);
         }
     }
 
