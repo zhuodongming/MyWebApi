@@ -9,7 +9,7 @@ namespace MyWebApi.Models
 {
     public class EFDbContext : DbContext
     {
-        public EFDbContext() : base("masterConnectionString")
+        public EFDbContext() : base("writeDbConnection")
         { }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

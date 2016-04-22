@@ -117,8 +117,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DbMasterSlaveCommandInterceptor.cs" />
+    <Compile Include="Models\DistributedReadWriteManager.cs" />
+    <Compile Include="Models\DistributedReadWriteSection.cs" />
+    <Compile Include="Models\DistributedReadWriteSectionHandler.cs" />
     <Compile Include="Models\EFDbContext.cs" />
     <Compile Include="Models\EFDbContextConfiguration.cs" />
+    <Compile Include="Models\EFLogTransactionInterceptor.cs" />
+    <Compile Include="Models\LogHelper.cs" />
+    <Compile Include="Models\SQLProfiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
