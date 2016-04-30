@@ -146,6 +146,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\HttpMethodOverrideHandler.cs" />
     <Compile Include="Models\DbMasterSlaveCommandInterceptor.cs" />
     <Compile Include="Models\DistributedReadWriteManager.cs" />
     <Compile Include="Models\DistributedReadWriteSection.cs" />
