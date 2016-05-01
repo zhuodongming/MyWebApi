@@ -25,7 +25,6 @@ namespace MyWebApi.Filters
         {
             if (!actionContext.ModelState.IsValid)
             {
-
                 StringBuilder message = new StringBuilder(200);
                 message.Append("URL: " + actionContext.Request.RequestUri + Environment.NewLine);
                 message.Append("Method: " + actionContext.Request.Method + Environment.NewLine);
