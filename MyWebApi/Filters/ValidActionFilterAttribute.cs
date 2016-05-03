@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using log4net;
 using Newtonsoft.Json;
-using NLog;
 
 namespace MyWebApi.Filters
 {
@@ -20,7 +20,7 @@ namespace MyWebApi.Filters
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public class ValidActionFilterAttribute : ActionFilterAttribute
     {
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILog Logger = LogManager.GetLogger(typeof(ValidActionFilterAttribute));
         public override Task OnActionExecutingAsync(HttpActionContext actionContext, CancellationToken cancellationToken)
         {
             if (!actionContext.ModelState.IsValid)

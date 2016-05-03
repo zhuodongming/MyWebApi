@@ -1,11 +1,11 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure.Interception;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using log4net;
 
 namespace MyWebApi.Models
 {
@@ -23,7 +23,7 @@ namespace MyWebApi.Models
         {
             this.executionTime = executionTime;
         }
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILog Logger = LogManager.GetLogger(typeof(SQLProfiler));
         public override void ReaderExecuting(DbCommand command, DbCommandInterceptionContext<DbDataReader> interceptionContext)
         {
             Executing(interceptionContext);
@@ -74,14 +74,14 @@ namespace MyWebApi.Models
 
             if (interceptionContext.Exception != null)
             {
-                Logger.Error("Command {0} failed with exception {1}", LogHelper.GetSql(command), interceptionContext.Exception);
+                Logger.Error("Command " + LogHelper.GetSql(command) + " failed with exception " + interceptionContext.Exception);
             }
             else if (timer.ElapsedMilliseconds >= executionTime)
             {
-                Logger.Info("Sql execution time is {0} ms: {1}", timer.ElapsedMilliseconds, LogHelper.GetSql(command));
+                Logger.Info("Sql execution time is " + timer.ElapsedMilliseconds + " ms: " + LogHelper.GetSql(command));
             }
 
-            Logger.Debug("Sql:{0}", LogHelper.GetSql(command));
+            Logger.Debug("Sql:" + LogHelper.GetSql(command));
 
         }
     }

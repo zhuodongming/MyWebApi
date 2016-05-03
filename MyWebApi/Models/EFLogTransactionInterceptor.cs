@@ -1,10 +1,10 @@
-﻿using NLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure.Interception;
 using System.Linq;
 using System.Web;
+using log4net;
 
 namespace MyWebApi.Models
 {
@@ -13,7 +13,7 @@ namespace MyWebApi.Models
     /// </summary>
     public class EFLogTransactionInterceptor : IDbTransactionInterceptor
     {
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILog Logger = LogManager.GetLogger(typeof(EFLogTransactionInterceptor));
         public void Committed(DbTransaction transaction, DbTransactionInterceptionContext interceptionContext)
         {
 
@@ -58,7 +58,7 @@ namespace MyWebApi.Models
         {
             if (interceptionContext.Exception != null)
             {
-                Logger.Error<Exception>("Transaction failed with exception {0}", interceptionContext.Exception);
+                Logger.Error("Transaction failed with exception {0}", interceptionContext.Exception);
             }
         }
 

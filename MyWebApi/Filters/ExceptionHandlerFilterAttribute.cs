@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Filters;
+using log4net;
 
 namespace MyWebApi.Filters
 {
@@ -21,7 +21,7 @@ namespace MyWebApi.Filters
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public class ExceptionHandlerFilterAttribute : ExceptionFilterAttribute
     {
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ILog Logger = LogManager.GetLogger(typeof(ExceptionHandlerFilterAttribute));
         public override Task OnExceptionAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
         {
             StringBuilder message = new StringBuilder(200);
@@ -32,7 +32,7 @@ namespace MyWebApi.Filters
             message.Append("Action: " + actionExecutedContext.ActionContext.ActionDescriptor.ActionName + Environment.NewLine);
             message.Append("Action Parameters: " + JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments));
 
-            Logger.Error<Exception>(message.ToString(), actionExecutedContext.Exception);
+            Logger.Error(message.ToString(), actionExecutedContext.Exception);
 
             var exceptionType = actionExecutedContext.Exception.GetType();
 
