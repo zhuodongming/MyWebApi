@@ -25,27 +25,35 @@ namespace MyWebApi.Filters
         public AuthenticateAttribute()
         {
             userAccounters = new Dictionary<string, string>();
-            userAccounters.Add("Foo", "Password");
-            userAccounters.Add("Bar", "Password");
-            userAccounters.Add("Baz", "Password");
+            userAccounters.Add("user1", "token1");
+            userAccounters.Add("user2", "token2");
+            userAccounters.Add("user3", "token3");
         }
         public async Task AuthenticateAsync(HttpAuthenticationContext context, CancellationToken cancellationToken)
         {
+            var method = context.Request.Method.Method;
+            var rawUrl = context.Request.RequestUri.PathAndQuery;
+            var date = context.Request.Headers.Date.ToString();
+            var bytesContent = await context.Request.Content.ReadAsByteArrayAsync();
+            var contentMD5 = "MD5";//MD5(bytesContent);
+
             IPrincipal user = null;
             var headerValue = context.Request.Headers.Authorization;
-            if (headerValue != null && headerValue.Scheme == "Basic")
+            if (headerValue != null && headerValue.Scheme == "webapi")
             {
                 string credential = Encoding.UTF8.GetString(Convert.FromBase64String(headerValue.Parameter));
                 string[] split = credential.Split(':');
                 if (split.Length == 2)
                 {
-                    string userName = split[0];
-                    string password;
-                    if (userAccounters.TryGetValue(userName, out password))
+                    string userId = split[0];
+                    string token;
+                    if (userAccounters.TryGetValue(userId, out token))
                     {
-                        if (password == split[1])
+                        var preSignstring = method + "\n" + rawUrl + "\n" + date + "\n" + contentMD5 + "\n" + token;
+                        var sign = "sgin";//MD5(preSignstring);
+                        if (sign == split[1])
                         {
-                            GenericIdentity identity = new GenericIdentity(userName, "Basic");
+                            GenericIdentity identity = new GenericIdentity(userId, "webapi");
                             user = new GenericPrincipal(identity, new string[0]);
                         }
                     }

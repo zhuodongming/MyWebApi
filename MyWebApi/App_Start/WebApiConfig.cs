@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
+
+using MyWebApi.Filters;
 using System.Web.Http;
 using System.Web.Http.Cors;
-using MyWebApi.Filters;
 
 namespace MyWebApi
 {
